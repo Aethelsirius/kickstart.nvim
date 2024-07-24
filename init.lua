@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -300,6 +300,7 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'debugloop/telescope-undo.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
         'nvim-telescope/telescope-fzf-native.nvim',
 
@@ -354,12 +355,20 @@ require('lazy').setup({
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          ['undo'] = {
+            mappings = {
+              i = {
+                ['<C-y>'] = require('telescope-undo.actions').restore,
+              },
+            },
+          },
         },
       }
 
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'undo')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -373,6 +382,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>u', '<cmd>Telescope undo<cr>', { desc = '[U]ndo Tree' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -562,10 +572,10 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        clangd = {},
+        gopls = {},
+        pyright = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -741,7 +751,7 @@ require('lazy').setup({
           ['<C-Space>'] = cmp.mapping.complete {},
 
           -- Think of <c-l> as moving to the right of your snippet expansion.
-          --  So if you have a snippet that's like:
+          --  So if you have a snippet that's like:o
           --  function $name($args)
           --    $body
           --  end
@@ -864,6 +874,69 @@ require('lazy').setup({
       --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
       --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+    end,
+  },
+  { -- Nvim clip history
+    'AckslD/nvim-neoclip.lua',
+    dependencies = {
+      -- you'll need at least one of these
+      { 'nvim-telescope/telescope.nvim' },
+      -- {'ibhagwan/fzf-lua'},
+    },
+    config = function()
+      require('neoclip').setup {
+        keys = {
+          telescope = {
+            i = {
+              paste = '<C-y>',
+            },
+          },
+          fzf = {
+            paste = 'ctrl-y',
+          },
+        },
+      }
+      pcall(require('telescope').load_extension, 'neoclip')
+      vim.keymap.set('n', '<leader>p', '<cmd>Telescope neoclip<cr>', { desc = '[P]aste from clipboard history' })
+    end,
+  },
+  {
+    'CRAG666/code_runner.nvim',
+    config = function()
+      require('code_runner').setup {
+        filetype = {
+          java = {
+            'cd $dir &&',
+            'javac $fileName &&',
+            'java $fileNameWithoutExt',
+          },
+          python = 'python3 -u',
+          typescript = 'deno run',
+          rust = {
+            'cd $dir &&',
+            'rustc $fileName &&',
+            '$dir/$fileNameWithoutExt',
+          },
+          c = function(...)
+            c_base = {
+              'cd $dir &&',
+              'gcc $fileName -o',
+              '/tmp/$fileNameWithoutExt',
+            }
+            local c_exec = {
+              '&& /tmp/$fileNameWithoutExt &&',
+              'rm /tmp/$fileNameWithoutExt',
+            }
+            vim.ui.input({ prompt = 'Add more args:' }, function(input)
+              c_base[4] = input
+              vim.print(vim.tbl_extend('force', c_base, c_exec))
+              require('code_runner.commands').run_from_fn(vim.list_extend(c_base, c_exec))
+            end)
+          end,
+          go = 'go run',
+        },
+      }
+      vim.keymap.set('n', '<leader>e', '<cmd>RunCode<cr>', { noremap = true, silent = false, desc = '[E]xecute Code' })
     end,
   },
 
