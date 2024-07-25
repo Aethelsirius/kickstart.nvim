@@ -154,6 +154,10 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Disable default file explorer
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -900,7 +904,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>p', '<cmd>Telescope neoclip<cr>', { desc = '[P]aste from clipboard history' })
     end,
   },
-  {
+  { --Code Runner for multiple languages
     'CRAG666/code_runner.nvim',
     config = function()
       require('code_runner').setup {
@@ -938,6 +942,53 @@ require('lazy').setup({
       }
       vim.keymap.set('n', '<leader>e', '<cmd>RunCode<cr>', { noremap = true, silent = false, desc = '[E]xecute Code' })
     end,
+  },
+  { --Pretty starting dashboard
+    'nvimdev/dashboard-nvim',
+    event = 'VimEnter',
+    config = function()
+      require('dashboard').setup {
+        shortcut_type = 'number',
+        config = {
+          header = {
+            [[]],
+            [[]],
+            [[]],
+            [[ ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗]],
+            [[ ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║]],
+            [[ ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║]],
+            [[ ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║]],
+            [[ ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║]],
+            [[ ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝]],
+            [[]],
+            [[]],
+            [[]],
+          },
+          footer = {
+            [[]],
+            [[]],
+            'https://github.com/aethelsirius',
+          },
+        },
+      }
+    end,
+    dependencies = { { 'nvim-tree/nvim-web-devicons' } },
+  },
+  { --File explorer
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {
+        filters = {
+          dotfiles = true,
+        },
+      }
+    end,
+    vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', { desc = 'File [T]ree Toggle' }),
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
