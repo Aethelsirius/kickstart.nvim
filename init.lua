@@ -363,6 +363,8 @@ require('lazy').setup({
             mappings = {
               i = {
                 ['<C-y>'] = require('telescope-undo.actions').restore,
+                ['<CR>'] = require('telescope-undo.actions').restore,
+                ['y'] = require('telescope-undo.actions').yank_additions,
               },
             },
           },
@@ -892,11 +894,11 @@ require('lazy').setup({
         keys = {
           telescope = {
             i = {
-              paste = '<C-y>',
+              paste = { '<cr>', '<C-y>' },
             },
           },
           fzf = {
-            paste = 'ctrl-y',
+            paste = { 'cr', 'ctrl-y' },
           },
         },
       }
@@ -984,11 +986,17 @@ require('lazy').setup({
     config = function()
       require('nvim-tree').setup {
         filters = {
-          dotfiles = true,
+          dotfiles = false,
         },
       }
     end,
-    vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', { desc = 'File [T]ree Toggle' }),
+    vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', { desc = '[T]oggle File [T]ree' }),
+  },
+  { --Better comments
+    'numToStr/Comment.nvim',
+    opts = {
+      -- add any options here
+    },
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
