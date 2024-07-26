@@ -390,7 +390,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+      -- vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>u', '<cmd>Telescope undo<cr>', { desc = '[U]ndo Tree' })
@@ -796,7 +796,7 @@ require('lazy').setup({
       }
     end,
   },
-
+  -- { 'catppuccin/nvim', name = 'catppuccin-mocha', priority = 1000 },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -808,13 +808,13 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      require('tokyonight').setup {
-        transparent = true,
-        styles = {
-          sidebars = 'transparent',
-          floats = 'transparent',
-        },
-      }
+      -- require('tokyonight').setup {
+      --   transparent = true,
+      --   styles = {
+      --     sidebars = 'transparent',
+      --     floats = 'transparent',
+      --   },
+      -- }
       vim.cmd.colorscheme 'tokyonight-night'
 
       -- You can configure highlights by doing something like:
@@ -1015,7 +1015,18 @@ require('lazy').setup({
     vim.keymap.set('n', '<leader>gc', '<cmd>Neogit commit<CR>', { desc = '[G]it [C]ommit' }),
     vim.keymap.set('n', '<leader>gp', '<cmd>Neogit push<CR>', { desc = '[G]it [P]ush' }),
   },
-
+  { -- Better File Browser
+    'nvim-telescope/telescope-file-browser.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
+    vim.keymap.set('n', '<leader>b', '<cmd>Telescope file_browser<CR>', { desc = 'File [B]rowser' }),
+  },
+  {
+    'nvim-telescope/telescope-frecency.nvim',
+    config = function()
+      require('telescope').load_extension 'frecency'
+    end,
+    vim.keymap.set('n', '<leader>sr', '<cmd>Telescope frecency<CR>', { desc = '[S]earch [R]ecent' }),
+  },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
