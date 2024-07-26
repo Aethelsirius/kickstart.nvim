@@ -286,6 +286,7 @@ require('lazy').setup({
         { '<leader>s', group = '[S]earch' },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
+        { '<leader>g', group = '[G]it' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       }
     end,
@@ -1010,6 +1011,9 @@ require('lazy').setup({
       'nvim-telescope/telescope.nvim',
     },
     config = true,
+    vim.keymap.set('n', '<leader>gm', '<cmd>Neogit<CR>', { desc = '[G]it [M]enu' }),
+    vim.keymap.set('n', '<leader>gc', '<cmd>Neogit commit<CR>', { desc = '[G]it [C]ommit' }),
+    vim.keymap.set('n', '<leader>gp', '<cmd>Neogit push<CR>', { desc = '[G]it [P]ush' }),
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
