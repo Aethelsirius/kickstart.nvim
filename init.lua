@@ -1003,11 +1003,13 @@ require('lazy').setup({
     end,
     vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', { desc = '[T]oggle File [T]ree' }),
   },
-  { --Better comments
-    'numToStr/Comment.nvim',
-    opts = {
-      -- add any options here
+  {
+    'NeogitOrg/neogit',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
     },
+    config = true,
   },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
